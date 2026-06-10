@@ -1,35 +1,44 @@
--- СУПЕР-ЯРКИЙ ESP для TempVSyringe
-print("ESP V (яркий) запущен!")
+-- ИСПРАВЛЕННЫЙ ESP для TempVSyringe (без спама)
+print("ESP V (исправленный) запущен!")
 
 local TARGET_NAME = "TempVSyringe"
+local highlighted = {}  -- Список уже подсвеченных объектов
 
--- === ЯРКАЯ ПОДСВЕТКА ===
+-- === ФУНКЦИЯ ПОДСВЕТКИ ===
 local function addHighlight(model)
-    -- Удаляем старую подсветку, если есть
-    local oldHighlight = model:FindFirstChild("Highlight")
-    if oldHighlight then oldHighlight:Destroy() end
+    -- Если модель уже подсвечена — ничего не делаем
+    if highlighted[model] then
+        return
+    end
     
+    -- Создаём подсветку
     local highlight = Instance.new("Highlight")
-    highlight.FillColor = Color3.fromRGB(0, 255, 0)      -- Максимально яркий зелёный
-    highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- Белая обводка
-    highlight.FillTransparency = 0.1                     -- Почти непрозрачный
-    highlight.OutlineTransparency = 0.0                  -- Обводка完全不 прозрачная
-    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- Всегда поверх всего
+    highlight.FillColor = Color3.fromRGB(0, 255, 0)      -- Ярко-зелёный
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.FillTransparency = 0.1                     -- Минимум прозрачности
+    highlight.OutlineTransparency = 0.0
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
     highlight.Parent = model
     
-    print("[ESP] НАЙДЕНА СЫВОРОТКА: " .. model.Name)
+    -- Запоминаем, что модель уже подсвечена
+    highlighted[model] = true
     
+    -- Сообщаем в консоль (только 1 раз за предмет)
+    print("[ESP] СЫВОРОТКА НАЙДЕНА И ПОДСВЕЧЕНА: " .. model.Name)
+    
+    -- Показываем уведомление (только 1 раз)
     game.StarterGui:SetCore("SendNotification", {
         Title = "💉 СЫВОРОТКА V";
-        Text = "Найдена! Ярко-зелёная подсветка!";
+        Text = "Найдена и подсвечена!";
         Duration = 2;
     })
 end
 
--- === ПОИСК ===
+-- === ОСНОВНОЙ ЦИКЛ ===
 spawn(function()
-    while wait(0.3) do  -- Проверяем чаще
+    while wait(0.5) do
         for _, obj in pairs(workspace:GetDescendants()) do
+            -- Проверяем, является ли объект целевой моделью
             if obj:IsA("Model") and obj.Name == TARGET_NAME then
                 addHighlight(obj)
             end
@@ -37,8 +46,9 @@ spawn(function()
     end
 end)
 
+-- Стартовое уведомление
 game.StarterGui:SetCore("SendNotification", {
-    Title = "✅ ESP V (ЯРКИЙ)";
-    Text = "Ищу TempVSyringe... подсветка будет очень яркой!";
+    Title = "✅ ESP V";
+    Text = "Ищу TempVSyringe... Без спама!";
     Duration = 3;
 })
