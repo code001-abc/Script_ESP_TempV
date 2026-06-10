@@ -1,15 +1,17 @@
--- ESP СЫВОРОТКА V: подсветка + огромная надпись TEMP V
-print("ESP V (с надписью) запущен!")
+-- You VS Homelander - TempV Syringe ESP
+-- Author: code001-abc
+-- Features: Highlight + Big Text Label
+
+print("TempV Syringe ESP Loaded!")
 
 local TARGET_NAME = "TempVSyringe"
 local processed = {}
 
--- === ФУНКЦИЯ ДОБАВЛЕНИЯ НАДПИСИ И ПОДСВЕТКИ ===
 local function addESP(model)
     if processed[model] then return end
     processed[model] = true
 
-    -- 1. Яркая подсветка
+    -- Bright green highlight
     local highlight = Instance.new("Highlight")
     highlight.FillColor = Color3.fromRGB(0, 255, 0)
     highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
@@ -18,10 +20,10 @@ local function addESP(model)
     highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
     highlight.Parent = model
 
-    -- 2. Огромная надпись TEMP V (видна издалека)
+    -- Big text label
     local billboard = Instance.new("BillboardGui")
-    billboard.Size = UDim2.new(0, 200, 0, 80)  -- Ширина 200, высота 80
-    billboard.StudsOffset = Vector3.new(0, 3, 0)  -- Над предметом
+    billboard.Size = UDim2.new(0, 200, 0, 80)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
     billboard.AlwaysOnTop = true
     billboard.Parent = model
 
@@ -29,18 +31,17 @@ local function addESP(model)
     textLabel.Size = UDim2.new(1, 0, 1, 0)
     textLabel.BackgroundTransparency = 1
     textLabel.Text = "💉 TEMP V 💉"
-    textLabel.TextColor3 = Color3.fromRGB(0, 255, 0)  -- Ярко-зелёный
-    textLabel.TextSize = 40  -- Огромный шрифт
-    textLabel.TextScaled = true  -- Масштабируется под размер окна
+    textLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+    textLabel.TextSize = 40
+    textLabel.TextScaled = true
     textLabel.Font = Enum.Font.GothamBold
     textLabel.TextStrokeTransparency = 0
     textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
     textLabel.Parent = billboard
 
-    print("[ESP] Найдена сыворотка: " .. model.Name .. " (надпись добавлена)")
+    print("[ESP] Found: " .. model.Name)
 end
 
--- === ОСНОВНОЙ ЦИКЛ ===
 spawn(function()
     while wait(0.5) do
         for _, obj in pairs(workspace:GetDescendants()) do
@@ -52,7 +53,7 @@ spawn(function()
 end)
 
 game.StarterGui:SetCore("SendNotification", {
-    Title = "✅ ESP V + НАДПИСЬ";
-    Text = "Ищу TempVSyringe... Будет видно издалека!";
+    Title = "✅ TempV ESP";
+    Text = "Searching for TempVSyringe...";
     Duration = 3;
 })
