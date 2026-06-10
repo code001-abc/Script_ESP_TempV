@@ -1,42 +1,34 @@
--- ФИНАЛЬНЫЙ ESP для TempVSyringe (с диагностикой)
-print("ESP V (финальный) запущен!")
+-- МАКСИМАЛЬНО ЯРКИЙ И СТАБИЛЬНЫЙ ESP ДЛЯ ТЕЛЕФОНА
+print("SUPER BRIGHT ESP ЗАПУЩЕН")
 
-local TARGET_NAME = "TempVSyringe"
-local highlighted = {}
+local TargetItem = "TempVSyringe"
 
-local function addHighlight(obj)
-    if highlighted[obj] then return end
-    highlighted[obj] = true
+-- Функция, которая добавляет невероятно яркую подсветку
+local function MakeItGlow(object)
+    -- Удаляем старую подсветку, если она есть
+    local old = object:FindFirstChild("ESP_Highlight")
+    if old then old:Destroy() end
 
-    local highlight = Instance.new("Highlight")
-    highlight.FillColor = Color3.fromRGB(0, 255, 0)
-    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-    highlight.FillTransparency = 0.1
-    highlight.OutlineTransparency = 0.0
-    -- Убрали DepthMode для совместимости
-    highlight.Parent = obj
-
-    print("[ESP] НАЙДЕНО И ПОДСВЕЧЕНО: " .. obj.Name .. " (" .. obj.ClassName .. ")")
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "💉 НАЙДЕНО!";
-        Text = obj.Name;
-        Duration = 2;
-    })
+    -- Создаём новую подсветку
+    local glow = Instance.new("Highlight")
+    glow.Name = "ESP_Highlight"
+    glow.FillColor = Color3.fromRGB(0, 255, 0)   -- Зелёный
+    glow.OutlineColor = Color3.fromRGB(255, 255, 255) -- Белая обводка
+    glow.FillTransparency = 0.1   -- Почти не прозрачный
+    glow.OutlineTransparency = 0.0
+    glow.Parent = object
+    
+    print("ЯРКО ПОДСВЕЧЕНО: " .. object.Name)
 end
 
--- Поиск Моделей и Инструментов
-spawn(function()
-    while wait(0.5) do
-        for _, obj in pairs(workspace:GetDescendants()) do
-            if (obj:IsA("Model") or obj:IsA("Tool")) and obj.Name == TARGET_NAME then
-                addHighlight(obj)
-            end
+-- Бесконечный цикл поиска
+while true do
+    -- Ищем все объекты в мире
+    for _, item in pairs(workspace:GetDescendants()) do
+        -- Если это модель или инструмент и имя совпадает
+        if (item:IsA("Model") or item:IsA("Tool")) and item.Name == TargetItem then
+            MakeItGlow(item)
         end
     end
-end)
-
-game.StarterGui:SetCore("SendNotification", {
-    Title = "✅ ESP V (финал)";
-    Text = "Ищу " .. TARGET_NAME .. " (модели и инструменты)";
-    Duration = 3;
-})
+    wait(0.5) -- Пауза, чтобы телефон не грелся
+end
