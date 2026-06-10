@@ -1,48 +1,36 @@
--- ИДЕАЛЬНЫЙ ESP для сыворотки V (модель TempVSyringe)
-print("ESP V (финал) запущен!")
+-- СУПЕР-ЯРКИЙ ESP для TempVSyringe
+print("ESP V (яркий) запущен!")
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
--- === ТОЧНОЕ НАЗВАНИЕ МОДЕЛИ ===
 local TARGET_NAME = "TempVSyringe"
 
--- === ФУНКЦИЯ ПРОВЕРКИ (только модели) ===
-local function isTarget(obj)
-    -- Ищем только модели (целые предметы)
-    if obj:IsA("Model") and obj.Name == TARGET_NAME then
-        return true
-    end
-    return false
-end
-
--- === ПОДСВЕТКА ===
-local highlighted = {}
-
+-- === ЯРКАЯ ПОДСВЕТКА ===
 local function addHighlight(model)
-    if highlighted[model] then return end
-    highlighted[model] = true
+    -- Удаляем старую подсветку, если есть
+    local oldHighlight = model:FindFirstChild("Highlight")
+    if oldHighlight then oldHighlight:Destroy() end
     
     local highlight = Instance.new("Highlight")
-    highlight.FillColor = Color3.fromRGB(0, 255, 0)  -- Зелёный
-    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-    highlight.FillTransparency = 0.3
+    highlight.FillColor = Color3.fromRGB(0, 255, 0)      -- Максимально яркий зелёный
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- Белая обводка
+    highlight.FillTransparency = 0.1                     -- Почти непрозрачный
+    highlight.OutlineTransparency = 0.0                  -- Обводка完全不 прозрачная
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- Всегда поверх всего
     highlight.Parent = model
     
     print("[ESP] НАЙДЕНА СЫВОРОТКА: " .. model.Name)
     
     game.StarterGui:SetCore("SendNotification", {
         Title = "💉 СЫВОРОТКА V";
-        Text = "Найдена! Иди за ней!";
-        Duration = 3;
+        Text = "Найдена! Ярко-зелёная подсветка!";
+        Duration = 2;
     })
 end
 
--- === ОСНОВНОЙ ЦИКЛ ===
+-- === ПОИСК ===
 spawn(function()
-    while wait(0.5) do
+    while wait(0.3) do  -- Проверяем чаще
         for _, obj in pairs(workspace:GetDescendants()) do
-            if isTarget(obj) then
+            if obj:IsA("Model") and obj.Name == TARGET_NAME then
                 addHighlight(obj)
             end
         end
@@ -50,7 +38,7 @@ spawn(function()
 end)
 
 game.StarterGui:SetCore("SendNotification", {
-    Title = "✅ ESP V";
-    Text = "Ищу модель TempVSyringe...";
+    Title = "✅ ESP V (ЯРКИЙ)";
+    Text = "Ищу TempVSyringe... подсветка будет очень яркой!";
     Duration = 3;
 })
