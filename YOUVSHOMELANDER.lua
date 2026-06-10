@@ -1,54 +1,42 @@
--- ИСПРАВЛЕННЫЙ ESP для TempVSyringe (без спама)
-print("ESP V (исправленный) запущен!")
+-- ФИНАЛЬНЫЙ ESP для TempVSyringe (с диагностикой)
+print("ESP V (финальный) запущен!")
 
 local TARGET_NAME = "TempVSyringe"
-local highlighted = {}  -- Список уже подсвеченных объектов
+local highlighted = {}
 
--- === ФУНКЦИЯ ПОДСВЕТКИ ===
-local function addHighlight(model)
-    -- Если модель уже подсвечена — ничего не делаем
-    if highlighted[model] then
-        return
-    end
-    
-    -- Создаём подсветку
+local function addHighlight(obj)
+    if highlighted[obj] then return end
+    highlighted[obj] = true
+
     local highlight = Instance.new("Highlight")
-    highlight.FillColor = Color3.fromRGB(0, 255, 0)      -- Ярко-зелёный
+    highlight.FillColor = Color3.fromRGB(0, 255, 0)
     highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-    highlight.FillTransparency = 0.1                     -- Минимум прозрачности
+    highlight.FillTransparency = 0.1
     highlight.OutlineTransparency = 0.0
-    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-    highlight.Parent = model
-    
-    -- Запоминаем, что модель уже подсвечена
-    highlighted[model] = true
-    
-    -- Сообщаем в консоль (только 1 раз за предмет)
-    print("[ESP] СЫВОРОТКА НАЙДЕНА И ПОДСВЕЧЕНА: " .. model.Name)
-    
-    -- Показываем уведомление (только 1 раз)
+    -- Убрали DepthMode для совместимости
+    highlight.Parent = obj
+
+    print("[ESP] НАЙДЕНО И ПОДСВЕЧЕНО: " .. obj.Name .. " (" .. obj.ClassName .. ")")
     game.StarterGui:SetCore("SendNotification", {
-        Title = "💉 СЫВОРОТКА V";
-        Text = "Найдена и подсвечена!";
+        Title = "💉 НАЙДЕНО!";
+        Text = obj.Name;
         Duration = 2;
     })
 end
 
--- === ОСНОВНОЙ ЦИКЛ ===
+-- Поиск Моделей и Инструментов
 spawn(function()
     while wait(0.5) do
         for _, obj in pairs(workspace:GetDescendants()) do
-            -- Проверяем, является ли объект целевой моделью
-            if obj:IsA("Model") and obj.Name == TARGET_NAME then
+            if (obj:IsA("Model") or obj:IsA("Tool")) and obj.Name == TARGET_NAME then
                 addHighlight(obj)
             end
         end
     end
 end)
 
--- Стартовое уведомление
 game.StarterGui:SetCore("SendNotification", {
-    Title = "✅ ESP V";
-    Text = "Ищу TempVSyringe... Без спама!";
+    Title = "✅ ESP V (финал)";
+    Text = "Ищу " .. TARGET_NAME .. " (модели и инструменты)";
     Duration = 3;
 })
