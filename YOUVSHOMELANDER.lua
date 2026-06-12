@@ -1,6 +1,6 @@
 -- ============================================
--- TempV ESP HUB by code001-abc
--- Features: Moveable Window + ESP (Syringe + Players)
+-- TempV ESP HUB by code001-abc (FINAL)
+-- Кнопка: красная + зелёная обводка
 -- ============================================
 
 print("TempV ESP HUB загружен!")
@@ -15,7 +15,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
 
--- === GUI ===
+-- GUI
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "TempV_HUB"
 screenGui.Parent = game:GetService("CoreGui")
@@ -28,17 +28,18 @@ mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 mainFrame.BorderSizePixel = 2
 mainFrame.BorderColor3 = Color3.fromRGB(0, 255, 0)
 mainFrame.BackgroundTransparency = 0.1
+mainFrame.Visible = true
 mainFrame.Parent = screenGui
 
--- Заголовок (за него тащим)
+-- Заголовок
 local titleBar = Instance.new("TextLabel")
-titleBar.Size = UDim2.new(1, 0, 0, 30)
+titleBar.Size = UDim2.new(1, -30, 0, 30)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.Text = "🔧 TempV ESP HUB  (тяни меня)"
+titleBar.Text = "🔧 TempV ESP HUB (тяни)"
 titleBar.TextColor3 = Color3.fromRGB(0, 255, 0)
 titleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
 titleBar.BackgroundTransparency = 0.3
-titleBar.TextXAlignment = Enum.TextXAlignment.Center
+titleBar.TextXAlignment = Enum.TextXAlignment.Left
 titleBar.Font = Enum.Font.GothamBold
 titleBar.TextSize = 14
 titleBar.Parent = mainFrame
@@ -76,17 +77,20 @@ playersBtn.Font = Enum.Font.GothamBold
 playersBtn.TextSize = 12
 playersBtn.Parent = mainFrame
 
--- Кнопка открытия (когда окно свёрнуто)
-local openBtn = Instance.new("TextButton")
-openBtn.Size = UDim2.new(0, 50, 0, 50)
-openBtn.Position = UDim2.new(0, 20, 0, 250)
-openBtn.Text = "🔴🔵"
-openBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-openBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-openBtn.Font = Enum.Font.GothamBold
-openBtn.TextSize = 20
-openBtn.Visible = false
-openBtn.Parent = screenGui
+-- ========== КНОПКА ОТКРЫТИЯ (КРАСНАЯ + ЗЕЛЁНАЯ ОБВОДКА) ==========
+local openButton = Instance.new("TextButton")  -- TextButton, чтобы не было проблем с картинкой
+openButton.Size = UDim2.new(0, 70, 0, 70)
+openButton.Position = UDim2.new(0, 20, 0, 250)
+openButton.Text = "⬅️"  -- Стрелка влево (означает "открыть/вернуть")
+openButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+openButton.TextSize = 30
+openButton.Font = Enum.Font.GothamBold
+openButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Красный фон
+openButton.BackgroundTransparency = 0
+openButton.BorderSizePixel = 3
+openButton.BorderColor3 = Color3.fromRGB(0, 255, 0)  -- Зелёная обводка
+openButton.Visible = false
+openButton.Parent = screenGui
 
 -- Статус
 local status = Instance.new("TextLabel")
@@ -120,44 +124,38 @@ end)
 UserInputService.InputChanged:Connect(function(input)
     if drag and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local delta = input.Position - dragStartPos
-        mainFrame.Position = UDim2.new(
-            frameStartPos.X.Scale, 
-            frameStartPos.X.Offset + delta.X,
-            frameStartPos.Y.Scale, 
-            frameStartPos.Y.Offset + delta.Y
-        )
+        mainFrame.Position = UDim2.new(frameStartPos.X.Scale, frameStartPos.X.Offset + delta.X, frameStartPos.Y.Scale, frameStartPos.Y.Offset + delta.Y)
     end
 end)
 
--- ========== СВЁРТЫВАНИЕ ==========
+-- ========== СВЁРТЫВАНИЕ / РАЗВЁРТЫВАНИЕ ==========
 minBtn.MouseButton1Click:Connect(function()
     mainFrame.Visible = false
-    openBtn.Visible = true
+    openButton.Visible = true
+    print("[HUB] Окно свёрнуто, показана красная кнопка с зелёной обводкой")
 end)
 
-openBtn.MouseButton1Click:Connect(function()
+openButton.MouseButton1Click:Connect(function()
     mainFrame.Visible = true
-    openBtn.Visible = false
+    openButton.Visible = false
+    print("[HUB] Окно развёрнуто, кнопка скрыта")
 end)
 
 -- ========== ESP СЫВОРОТКА ==========
 local function addSyringeESP(model)
     if syringeHighlights[model] then return end
     syringeHighlights[model] = true
-    
     local hl = Instance.new("Highlight")
     hl.FillColor = Color3.fromRGB(0, 255, 0)
     hl.OutlineColor = Color3.fromRGB(255, 255, 255)
     hl.FillTransparency = 0.1
     hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
     hl.Parent = model
-    
     local bill = Instance.new("BillboardGui")
     bill.Size = UDim2.new(0, 200, 0, 60)
     bill.StudsOffset = Vector3.new(0, 2.5, 0)
     bill.AlwaysOnTop = true
     bill.Parent = model
-    
     local txt = Instance.new("TextLabel")
     txt.Size = UDim2.new(1, 0, 1, 0)
     txt.BackgroundTransparency = 1
@@ -168,10 +166,9 @@ local function addSyringeESP(model)
     txt.TextStrokeTransparency = 0
     txt.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
     txt.Parent = bill
-    
     status.Text = "✅ Найдена сыворотка!"
     task.wait(2)
-    if espSyringeActive then status.Text = "Поиск сыворотки..." end
+    if espSyringeActive then status.Text = "Поиск..." end
 end
 
 local function clearSyringeESP()
@@ -189,20 +186,17 @@ local function addPlayerESP(player)
     if player == LocalPlayer then return end
     if not player.Character then return end
     if playerHighlights[player] then return end
-    
     local hl = Instance.new("Highlight")
     hl.FillColor = Color3.fromRGB(255, 100, 0)
     hl.OutlineColor = Color3.fromRGB(255, 255, 255)
     hl.FillTransparency = 0.3
     hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
     hl.Parent = player.Character
-    
     local bill = Instance.new("BillboardGui")
     bill.Size = UDim2.new(0, 150, 0, 40)
     bill.StudsOffset = Vector3.new(0, 2.5, 0)
     bill.AlwaysOnTop = true
     bill.Parent = player.Character
-    
     local txt = Instance.new("TextLabel")
     txt.Size = UDim2.new(1, 0, 1, 0)
     txt.BackgroundTransparency = 1
@@ -213,7 +207,6 @@ local function addPlayerESP(player)
     txt.TextStrokeTransparency = 0
     txt.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
     txt.Parent = bill
-    
     playerHighlights[player] = {hl = hl, bill = bill}
 end
 
@@ -225,7 +218,7 @@ local function clearPlayerESP()
     playerHighlights = {}
 end
 
--- ========== КНОПКИ ==========
+-- ========== КНОПКИ ВКЛ/ВЫКЛ ==========
 syringeBtn.MouseButton1Click:Connect(function()
     espSyringeActive = not espSyringeActive
     if espSyringeActive then
@@ -262,7 +255,7 @@ playersBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- ========== ОБРАБОТЧИКИ СОБЫТИЙ ==========
+-- ========== ОБРАБОТЧИКИ ==========
 workspace.DescendantAdded:Connect(function(obj)
     if espSyringeActive and (obj:IsA("Model") or obj:IsA("Tool")) and obj.Name == TARGET_NAME then
         task.wait(0.1)
@@ -295,10 +288,14 @@ for _, plr in pairs(Players:GetPlayers()) do
     end
 end
 
--- ========== СТАРТ ==========
-game.StarterGui:SetCore("SendNotification", {
+-- Стартовое уведомление
+game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "✅ TempV ESP HUB";
-    Text = "Окно можно перемещать! Тяни за заголовок";
-    Duration = 4;
+    Text = "Нажми на минус → появится красная кнопка с зелёной обводкой";
+    Duration = 5;
 })
-print("TempV ESP HUB готов | Перемещай окно за заголовок")
+
+print("═══════════════════════════════════════════")
+print("✅ TempV ESP HUB ЗАГРУЖЕН")
+print("   • Кнопка открытия: красный фон + зелёная обводка")
+print("═══════════════════════════════════════════")
